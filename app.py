@@ -54,21 +54,8 @@ st.markdown("""
 # ── LOAD DATA ────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv(
-        r'D:\data_analysis\online_retail_II.csv',
-        encoding='latin-1'
-    )
-    df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
-    df['Revenue'] = df['Quantity'] * df['Price']
-    df = df[~df['Invoice'].astype(str).str.startswith('C')]
-    df = df.dropna(subset=['Description'])
-    df = df[df['Quantity'] > 0]
-    df = df[df['Price'] > 0]
-    df = df[df['Quantity'] <= 1000]
-    df = df[df['Price'] <= 500]
-    df = df[df['Revenue'] <= 2000]
-    df['Week'] = df['InvoiceDate'].dt.to_period('W-SUN').astype(str)
-    df['Month'] = df['InvoiceDate'].dt.to_period('M').astype(str)
+    url = "https://raw.githubusercontent.com/simeah/retail-analytics/main/retail.parquet"
+    df = pd.read_parquet(url)
     return df
 
 # ── GENERATE CHART CODE ──────────────────────────────────
