@@ -9,44 +9,168 @@ import numpy as np
 st.set_page_config(
     page_title="AI Data Analyst",
     page_icon="📊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# ── BRAND COLOURS ───────────────────────────────────────
-COLOURS = {
-    'background': '#FFFFFF',
-    'text': '#1a1a2e',
-    'axis': '#AAAAAA',
-    'grid': '#F0F0F0',
-    'palette': ['#B8DDB8', '#F2AABB', '#B8CDE8', '#F5D98B',
-                '#C8B8E0', '#F5B8C4', '#C4D4B0', '#F5D4A8']
-}
-
-# ── STYLING ──────────────────────────────────────────────
+# ── CUSTOM STYLING ───────────────────────────────────────
 st.markdown("""
     <style>
-    .stApp { background-color: #FFFFFF; }
-    .stTextInput input { 
-        border: 2px solid #B8DDB8;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #FAF8F4 !important;
+    }
+    
+    [data-testid="stAppViewContainer"] {
+        padding: 24px !important;
+    }
+    
+    .stMetric {
+        background-color: transparent;
+        padding: 0;
+    }
+    
+    .metric-card {
+        background-color: #FFFFFF;
+        padding: 12px;
         border-radius: 8px;
-        font-size: 16px;
+        border: 0.5px solid #E8DCC8;
     }
-    h1, h2, h3 { color: #1a1a2e !important; }
-    .dataset-info {
-        background: #F8F8F8;
-        border-left: 4px solid #B8DDB8;
-        padding: 12px 16px;
-        border-radius: 4px;
-        font-size: 13px;
-        color: #555555;
-        margin-bottom: 20px;
+    
+    .metrics-box {
+        background-color: #FFFFFF;
+        padding: 16px;
+        border-radius: 8px;
+        border: 0.5px solid #E8DCC8;
+        margin-bottom: 24px;
     }
+    
+    .query-section {
+        background-color: #FFFFFF;
+        padding: 20px;
+        border-radius: 8px;
+        border: 0.5px solid #E8DCC8;
+        margin-bottom: 24px;
+    }
+    
+    .stTextInput input {
+        border: 0.5px solid #DDD !important;
+        border-radius: 6px !important;
+        background-color: #FAFAFA !important;
+        font-size: 13px !important;
+    }
+    
+    .stButton button {
+        background-color: #B8DDB8 !important;
+        color: #1a1a2e !important;
+        border: none !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 13px !important;
+    }
+    
+    .stButton button:hover {
+        background-color: #A5D0A5 !important;
+    }
+    
+    .stSelectbox select {
+        background-color: #FAFAFA !important;
+        border: 0.5px solid #DDD !important;
+        border-radius: 4px !important;
+        font-size: 12px !important;
+    }
+    
+    .stSelectbox > div {
+        background-color: transparent !important;
+    }
+    
+    .example-button {
+        background-color: transparent !important;
+        border: 0.5px solid #DDD !important;
+        color: #666 !important;
+        border-radius: 5px !important;
+        font-size: 12px !important;
+        padding: 8px 10px !important;
+    }
+    
+    .example-button:hover {
+        background-color: #F5F5F5 !important;
+        border-color: #BBB !important;
+    }
+    
     .insight-box {
-        background: #F8F8F8;
-        border-left: 4px solid #B8CDE8;
+        background-color: #F8F8F8;
+        border-left: 3px solid #B8CDE8;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: #555;
+    }
+    
+    .dataset-info {
+        background: rgba(184, 221, 184, 0.1);
+        border-left: 3px solid #B8DDB8;
         padding: 12px 16px;
         border-radius: 4px;
-        margin-top: 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #666;
+    }
+    
+    h1 {
+        color: #1a1a2e !important;
+        font-size: 28px !important;
+        font-weight: 400 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    h2 {
+        color: #1a1a2e !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        margin-top: 0 !important;
+        margin-bottom: 12px !important;
+    }
+    
+    h3 {
+        color: #1a1a2e !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+    }
+    
+    p {
+        color: #888888 !important;
+        font-size: 14px !important;
+    }
+    
+    [data-testid="stExpander"] {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    
+    [data-testid="stExpander"] details summary {
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: #1a1a2e !important;
+    }
+    
+    [data-testid="stDivider"] {
+        margin: 24px 0 !important;
+        border-color: #E8DCC8 !important;
+    }
+    
+    [data-testid="stExpanderDetails"] {
+        background-color: transparent !important;
+    }
+    
+    [data-testid="stVerticalBlock"] > [style*="flex-direction: column"] > [data-testid="stVerticalBlock"]:has([data-testid="stSelectbox"]) {
+        background-color: transparent !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -59,7 +183,7 @@ def load_data():
     return df
 
 # ── GENERATE CHART CODE ──────────────────────────────────
-def generate_chart(user_request, df):
+def generate_chart(user_request, df_filtered, period_name):
     client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
 
     prompt = f"""You are a Python data analyst. You have access to a pandas 
@@ -76,8 +200,9 @@ dataframe called 'df' with these columns:
 - Week: week period (W-SUN format)
 - Month: month period
 
-The dataframe has {len(df):,} rows covering {df['InvoiceDate'].min().strftime('%b %Y')} to {df['InvoiceDate'].max().strftime('%b %Y')}.
-Top countries: {', '.join(df.groupby('Country')['Revenue'].sum().sort_values(ascending=False).head(5).index.tolist())}
+The dataframe has {len(df_filtered):,} rows covering {df_filtered['InvoiceDate'].min().strftime('%b %Y')} to {df_filtered['InvoiceDate'].max().strftime('%b %Y')}.
+Time period: {period_name}
+Top countries: {', '.join(df_filtered.groupby('Country')['Revenue'].sum().sort_values(ascending=False).head(5).index.tolist())}
 
 The user wants: "{user_request}"
 
@@ -87,7 +212,7 @@ Write ONLY matplotlib Python code to visualise this. Rules:
 - Use fig, ax = plt.subplots(figsize=(12, 6))
 - Set fig.patch.set_facecolor('#FFFFFF')
 - Set ax.set_facecolor('#FFFFFF')
-- Use these colours in order: {COLOURS['palette']}
+- Use these colours in order: ['#B8DDB8', '#F2AABB', '#B8CDE8', '#F5D98B', '#C8B8E0', '#F5B8C4', '#C4D4B0', '#F5D4A8']
 - Use '#1a1a2e' for text and titles
 - Use '#AAAAAA' for axis labels
 - Remove top and right spines
@@ -103,109 +228,138 @@ Write ONLY matplotlib Python code to visualise this. Rules:
     )
     return message.content[0].text
 
+# ── GENERATE INSIGHTS ────────────────────────────────────
 def generate_insights(user_request, df_filtered):
     client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+    
+    # Build analysis data that we KNOW works
+    try:
+        total_revenue = df_filtered['Revenue'].sum()
+        total_orders = df_filtered['Invoice'].nunique()
+        avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
+        unique_countries = df_filtered['Country'].nunique()
+        unique_customers = df_filtered['Customer ID'].nunique()
+        date_min = df_filtered['InvoiceDate'].min()
+        date_max = df_filtered['InvoiceDate'].max()
+        
+        # Build relevant data based on the request
+        request_lower = user_request.lower()
+        
+        analysis_data = f"""
+DATASET SUMMARY:
+- Total Revenue: £{total_revenue:,.2f}
+- Total Orders: {total_orders:,}
+- Average Order Value: £{avg_order_value:.2f}
+- Unique Customers: {unique_customers:,}
+- Active Countries: {unique_countries}
+- Date Range: {date_min.strftime('%d %b %Y')} to {date_max.strftime('%d %b %Y')}
+"""
+        
+        # Add specific analysis based on what was requested
+        if 'revenue' in request_lower or 'monthly' in request_lower or 'weekly' in request_lower:
+            monthly_data = df_filtered.groupby('Month')['Revenue'].sum().sort_index()
+            analysis_data += f"\n\nMONTHLY REVENUE DATA:\n{monthly_data.to_string()}"
+        
+        if 'country' in request_lower:
+            country_data = df_filtered.groupby('Country')['Revenue'].sum().sort_values(ascending=False).head(10)
+            analysis_data += f"\n\nTOP 10 COUNTRIES:\n{country_data.to_string()}"
+        
+        if 'product' in request_lower or 'description' in request_lower:
+            product_data = df_filtered.groupby('Description')['Revenue'].sum().sort_values(ascending=False).head(10)
+            analysis_data += f"\n\nTOP 10 PRODUCTS:\n{product_data.to_string()}"
+        
+        if 'customer' in request_lower:
+            customer_data = df_filtered.groupby('Customer ID')['Revenue'].sum().sort_values(ascending=False).head(10)
+            analysis_data += f"\n\nTOP 10 CUSTOMERS:\n{customer_data.to_string()}"
+        
+        if 'growth' in request_lower:
+            monthly_growth = df_filtered.groupby('Month')['Revenue'].sum().pct_change() * 100
+            analysis_data += f"\n\nMONTH-OVER-MONTH GROWTH %:\n{monthly_growth.to_string()}"
+        
+    except Exception as e:
+        analysis_data = f"Basic metrics - Error in detailed analysis: {str(e)}"
+    
+    # Sonnet writes insights based on actual data
+    insights_prompt = f"""You are a senior data analyst presenting insights to business stakeholders.
 
-    # Build chart-specific data summary based on what was requested
-    request_lower = user_request.lower()
+The user asked: "{user_request}"
 
-    # Determine what data to summarise based on the request
-    if 'week' in request_lower:
-        data_summary = df_filtered.groupby('Week')['Revenue'].sum().sort_index()
-        data_context = f"Weekly revenue data:\n{data_summary.to_string()}"
-        time_unit = "week"
-    elif 'month' in request_lower:
-        data_summary = df_filtered.groupby('Month')['Revenue'].sum().sort_index()
-        data_context = f"Monthly revenue data:\n{data_summary.to_string()}"
-        time_unit = "month"
-    elif 'country' in request_lower or 'countr' in request_lower:
-        data_summary = df_filtered.groupby('Country')['Revenue'].sum().sort_values(ascending=False).head(10)
-        data_context = f"Revenue by country:\n{data_summary.to_string()}"
-        time_unit = "country"
-    elif 'product' in request_lower or 'description' in request_lower:
-        data_summary = df_filtered.groupby('Description')['Revenue'].sum().sort_values(ascending=False).head(10)
-        data_context = f"Revenue by product:\n{data_summary.to_string()}"
-        time_unit = "product"
-    elif 'customer' in request_lower:
-        data_summary = df_filtered.groupby('Customer ID')['Revenue'].sum().sort_values(ascending=False).head(10)
-        data_context = f"Revenue by customer:\n{data_summary.to_string()}"
-        time_unit = "customer"
-    elif 'growth' in request_lower:
-        data_summary = df_filtered.groupby('Month')['Revenue'].sum().pct_change() * 100
-        data_context = f"Month over month growth %:\n{data_summary.to_string()}"
-        time_unit = "growth period"
-    else:
-        data_summary = df_filtered.groupby('Month')['Revenue'].sum().sort_index()
-        data_context = f"Monthly revenue data:\n{data_summary.to_string()}"
-        time_unit = "period"
+Here is the actual data analysis:
+{analysis_data}
 
-    # Check if December 2011 is in the filtered data
-    has_partial_dec = '2011-12' in df_filtered['Month'].values
-
-    partial_dec_note = """
-IMPORTANT: December 2011 data is INCOMPLETE — it only covers 1-9 December 2011. 
-Any comments about December 2011 must explicitly note it is a partial month.
-Do NOT compare December 2011 directly to other full months without flagging this.
-""" if has_partial_dec else ""
-
-    prompt = f"""You are a senior data analyst presenting insights to business stakeholders.
-
-The user asked to see: "{user_request}"
-
-Here is the ACTUAL DATA shown in the chart:
-{data_context}
-
-{partial_dec_note}
-
-Write 3-5 concise, specific, actionable bullet point insights based ONLY on the data above.
-- Comment specifically on the {time_unit} level data shown — not broader dataset stats
-- Use actual numbers from the data above
-- Highlight the highest and lowest values
-- Note any clear trends, spikes or drops
-- Be specific — mention actual {time_unit} names/dates where relevant
+Write 3-5 concise, specific bullet point insights based ONLY on the data above.
+- Use actual numbers and values from the data
+- Be specific and actionable
+- Highlight trends, patterns, or anomalies
+- Reference actual values
 - End with one "⚠️ Watch out:" or "💡 Opportunity:" point
+- Format as bullet points starting with emojis
 - Keep each bullet to 1-2 lines maximum
-- Format as bullet points starting with an emoji"""
+- Do NOT mention technical errors or code issues
+- Focus on the business insights from the actual numbers"""
 
     message = client.messages.create(
         model="claude-sonnet-4-5",
         max_tokens=500,
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "user", "content": insights_prompt}]
     )
+    
     return message.content[0].text
 
 # ── MAIN APP ─────────────────────────────────────────────
-st.title("📊 AI Data Analyst")
+
+# HEADER
+st.markdown("# 📊 AI Data Analyst")
 st.markdown("##### Natural language analytics — type what you want to see")
 
-# ── DATASET INFO ─────────────────────────────────────────
+# DATASET INFO
 st.markdown("""
 <div class="dataset-info">
-📦 <strong>Dataset:</strong> UCI Online Retail II — 
-<a href="https://www.kaggle.com/code/olgaluzhetska/online-retail-cohort-analysis-and-other-stories/input" target="_blank">
-View on Kaggle</a> &nbsp;|&nbsp; 
-UK-based online retailer &nbsp;|&nbsp; 
-Dec 2009 — Dec 2011 &nbsp;|&nbsp; 
-1,067,371 transactions across 43 countries
+📦 <strong>Dataset:</strong> UCI Online Retail II | UK-based online retailer | Dec 2009 — Dec 2011 | 1,067,371 transactions
 </div>
 """, unsafe_allow_html=True)
+
+# ABOUT THIS DATA
+with st.expander("📋 **About This Data**"):
+    st.markdown("""
+    **Order-level sales data for Dec 2009 - Dec 2011**
+    *(Please note: partial month data for Dec 2011)*
+    
+    **Available fields:**
+    - Invoice Number
+    - Item Stock Code
+    - Item Description
+    - Quantity
+    - Invoice Date
+    - Price
+    - Customer ID
+    - Customer Country
+    
+    **How it works:**
+    - 📊 **Charts** are generated instantly using AI
+    - 💡 **Insights** analyse the chart data (10-15 sec to generate)
+    - 🔍 Ask anything in natural language
+    """)
 
 # Load data
 with st.spinner("Loading data..."):
     df = load_data()
 
-# ── TIME PERIOD SELECTOR ──────────────────────────────────
-st.markdown("**Time period:**")
-period = st.radio(
-    "Select period",
-    ["All Time", "Last 12 Months", "Last 6 Months", "Last 3 Months", "Last Month"],
-    horizontal=True,
-    label_visibility="collapsed"
-)
-
-# Filter df based on period
+# ── TIME PERIOD SELECTOR ─────────────────────────────────
 max_date = df['InvoiceDate'].max()
 
+st.markdown(f"<div style='font-size: 12px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin-bottom: 8px;'>Time Period</div>", unsafe_allow_html=True)
+
+period = st.selectbox(
+    "Select Time Period",
+    ["All Time", "Last 12 Months", "Last 6 Months", "Last 3 Months", "Last Month"],
+    label_visibility="collapsed",
+    key="period_select"
+)
+
+st.divider()
+
+# ── FILTER DATA BASED ON PERIOD ──────────────────────────
 if period == "Last 12 Months":
     df_filtered = df[df['InvoiceDate'] >= max_date - pd.DateOffset(months=12)]
     df_prev = df[(df['InvoiceDate'] >= max_date - pd.DateOffset(months=24)) &
@@ -269,13 +423,17 @@ def format_growth(value, label):
     if value is None or label is None:
         return ""
     arrow = "▲" if value >= 0 else "▼"
-    color = "green" if value >= 0 else "red"
-    return f"<span style='color:{color};font-size:11px'>{arrow} {abs(value):.1f}% {label}</span>"
+    color = "#00AA66" if value >= 0 else "#DD5555"
+    return f"<div style='color:{color}; font-size:10px; line-height: 1.4;'>{arrow} {abs(value):.1f}% {label}</div>"
 
-# ── KPI ROW ──────────────────────────────────────────────
+# ── METRICS BOX ──────────────────────────────────────────
+st.markdown('<div class="metrics-box">', unsafe_allow_html=True)
+
+st.markdown(f"<div style='font-size: 11px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin-bottom: 12px;'>📈 Summary Metrics</div>", unsafe_allow_html=True)
+
+# ── DISPLAY METRICS ──────────────────────────────────────
 date_min = df_filtered['InvoiceDate'].min().strftime('%d %b %Y')
 date_max = df_filtered['InvoiceDate'].max().strftime('%d %b %Y')
-st.caption(f"📅 Showing: {date_min} — {date_max}")
 
 # Calculate current period values
 curr_revenue = df_filtered['Revenue'].sum()
@@ -294,62 +452,94 @@ yoy_aov = (df_yoy['Revenue'].sum() / df_yoy['Invoice'].nunique()) if df_yoy is n
 aov_period_growth = ((curr_aov - prev_aov) / prev_aov * 100) if prev_aov else None
 aov_yoy_growth = ((curr_aov - yoy_aov) / yoy_aov * 100) if yoy_aov else None
 
-# ── DISPLAY KPIs ─────────────────────────────────────────
+st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 12px;'><strong>Period:</strong> {date_min} — {date_max}</div>", unsafe_allow_html=True)
+
+# Display metrics in 4 columns
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("Total Revenue", f"£{curr_revenue/1e6:.2f}M")
-    if period != "All Time":
-        st.markdown(format_growth(rev_period_growth, period_label), unsafe_allow_html=True)
-        if yoy_label:
-            st.markdown(format_growth(rev_yoy_growth, yoy_label), unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="metric-card">
+    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Revenue</div>
+    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">£{curr_revenue/1e6:.2f}M</div>
+    {format_growth(rev_period_growth, period_label)}
+    {format_growth(rev_yoy_growth, yoy_label) if yoy_label else ''}
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    st.metric("Total Orders", f"{curr_orders:,}")
-    if period != "All Time":
-        st.markdown(format_growth(orders_period_growth, period_label), unsafe_allow_html=True)
-        if yoy_label:
-            st.markdown(format_growth(orders_yoy_growth, yoy_label), unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="metric-card">
+    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Orders</div>
+    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">{curr_orders:,}</div>
+    {format_growth(orders_period_growth, period_label)}
+    {format_growth(orders_yoy_growth, yoy_label) if yoy_label else ''}
+    </div>
+    """, unsafe_allow_html=True)
 
 with col3:
-    st.metric("Avg Order Value", f"£{curr_aov:.2f}")
-    if period != "All Time":
-        st.markdown(format_growth(aov_period_growth, period_label), unsafe_allow_html=True)
-        if yoy_label:
-            st.markdown(format_growth(aov_yoy_growth, yoy_label), unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="metric-card">
+    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Avg Order Value</div>
+    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">£{curr_aov:.2f}</div>
+    {format_growth(aov_period_growth, period_label)}
+    {format_growth(aov_yoy_growth, yoy_label) if yoy_label else ''}
+    </div>
+    """, unsafe_allow_html=True)
 
 with col4:
-    st.metric("Countries", f"{curr_countries}")
-    st.caption("Active in selected period")
+    st.markdown(f"""
+    <div class="metric-card">
+    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Active Countries</div>
+    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">{curr_countries}</div>
+    <div style="font-size: 10px; color: #AAAAAA;">From period</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
 
-# ── QUERY INPUT ───────────────────────────────────────────
-user_request = st.text_input(
-    "What would you like to see?",
-    placeholder="e.g. Show me monthly revenue by top 5 countries",
-    key="query_input"
-)
+# ── QUERY SECTION ────────────────────────────────────────
+st.markdown('<div class="query-section">', unsafe_allow_html=True)
 
-col_btn1, col_btn2 = st.columns([1, 5])
-with col_btn1:
-    generate_btn = st.button("✨ Generate", type="primary")
+st.markdown("## 🔍 What would you like to see?")
 
-# ── EXAMPLE QUERIES ───────────────────────────────────────
+st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 12px;'><em>Uses time period selected above, unless explicitly requested otherwise</em></div>", unsafe_allow_html=True)
+
+col_input, col_btn = st.columns([5, 1])
+
+with col_input:
+    user_request = st.text_input(
+        "Query input",
+        placeholder="e.g. Show me monthly revenue by top 5 countries",
+        label_visibility="collapsed"
+    )
+
+with col_btn:
+    generate_btn = st.button("✨ Generate")
+
 st.markdown("**Try these:**")
-examples = [
-    "Weekly revenue trend",
+col1, col2, col3, col4, col5, col6 = st.columns(6)
+
+example_queries = [
+    "Show me weekly revenue trend",
     "Top 10 products by revenue",
     "Revenue by country",
-    "Monthly growth %",
-    "Top 10 customers by spend"
+    "Monthly growth percentage",
+    "Top 10 customers by spend",
+    "Sales by country pie chart"
 ]
-cols = st.columns(len(examples))
-for i, example in enumerate(examples):
-    with cols[i]:
-        if st.button(example, key=f"ex_{i}"):
+
+for i, (col, example) in enumerate(zip([col1, col2, col3, col4, col5, col6], example_queries)):
+    with col:
+        if st.button(example, key=f"ex_{i}", use_container_width=True):
             user_request = example
             generate_btn = True
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.divider()
 
 # ── GENERATE & DISPLAY ────────────────────────────────────
 if generate_btn and user_request:
@@ -359,13 +549,14 @@ if generate_btn and user_request:
     with col_chart:
         with st.spinner("✨ Generating chart..."):
             try:
-                code = generate_chart(user_request, df_filtered)
+                code = generate_chart(user_request, df_filtered, period)
                 code = code.replace("```python", "").replace("```", "").strip()
                 local_vars = {
                     'df': df_filtered, 'plt': plt, 'pd': pd,
                     'np': np, 'mticker': mticker
                 }
                 exec(code, local_vars)
+                st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 8px;'><strong>Time period:</strong> {period}</div>", unsafe_allow_html=True)
                 st.pyplot(plt.gcf())
                 plt.close()
 
