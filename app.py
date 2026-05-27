@@ -9,8 +9,7 @@ import numpy as np
 st.set_page_config(
     page_title="AI Data Analyst",
     page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
 # No custom styling - using standard Streamlit
@@ -261,10 +260,8 @@ def calc_orders_growth(current, previous):
 
 def format_growth(value, label):
     if value is None or label is None:
-        return ""
-    arrow = "▲" if value >= 0 else "▼"
-    color = "#00AA66" if value >= 0 else "#DD5555"
-    return f"<div style='color:{color}; font-size:10px; line-height: 1.4;'>{arrow} {abs(value):.1f}% {label}</div>"
+        return None
+    return f"{abs(value):.1f}% {label}"
 
 # ── DISPLAY METRICS ──────────────────────────────────────
 date_min = df_filtered['InvoiceDate'].min().strftime('%d %b %Y')
@@ -294,16 +291,16 @@ aov_yoy_growth = ((curr_aov - yoy_aov) / yoy_aov * 100) if yoy_aov else None
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    growth_text = f"{format_growth(rev_period_growth, period_label)}" if rev_period_growth is not None else "No previous data"
-    st.metric("Total Revenue", f"£{curr_revenue/1e6:.2f}M", delta=growth_text if period_label else None)
+    delta = format_growth(rev_period_growth, period_label)
+    st.metric("Total Revenue", f"£{curr_revenue/1e6:.2f}M", delta=delta)
 
 with col2:
-    growth_text = f"{format_growth(orders_period_growth, period_label)}" if orders_period_growth is not None else "No previous data"
-    st.metric("Total Orders", f"{curr_orders:,}", delta=growth_text if period_label else None)
+    delta = format_growth(orders_period_growth, period_label)
+    st.metric("Total Orders", f"{curr_orders:,}", delta=delta)
 
 with col3:
-    growth_text = f"{format_growth(aov_period_growth, period_label)}" if aov_period_growth is not None else "No previous data"
-    st.metric("Avg Order Value", f"£{curr_aov:.2f}", delta=growth_text if period_label else None)
+    delta = format_growth(aov_period_growth, period_label)
+    st.metric("Avg Order Value", f"£{curr_aov:.2f}", delta=delta)
 
 with col4:
     st.metric("Active Countries", curr_countries)
@@ -365,14 +362,12 @@ if generate_btn and user_request:
 
             except Exception as e:
                 st.error(f"Error generating chart: {str(e)}")
-                st.info("Try rephrasing your request")
 
     with col_insights:
         with st.spinner("💡 Generating insights..."):
             try:
                 insights = generate_insights(user_request, df_filtered)
-                st.subheader("💡 Insights")
-                st.info(insights)
+                st.write(insights)
             except Exception as e:
                 st.error(f"Error generating insights: {str(e)}")
 
