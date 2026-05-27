@@ -13,167 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ── CUSTOM STYLING ───────────────────────────────────────
-st.markdown("""
-    <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #FAF8F4 !important;
-    }
-    
-    [data-testid="stAppViewContainer"] {
-        padding: 24px !important;
-    }
-    
-    .stMetric {
-        background-color: transparent;
-        padding: 0;
-    }
-    
-    .metric-card {
-        background-color: #FFFFFF;
-        padding: 12px;
-        border-radius: 8px;
-        border: 0.5px solid #E8DCC8;
-    }
-    
-    .metrics-box {
-        background-color: #FFFFFF;
-        padding: 16px;
-        border-radius: 8px;
-        border: 0.5px solid #E8DCC8;
-        margin-bottom: 24px;
-    }
-    
-    .query-section {
-        background-color: #FFFFFF;
-        padding: 20px;
-        border-radius: 8px;
-        border: 0.5px solid #E8DCC8;
-        margin-bottom: 24px;
-    }
-    
-    .stTextInput input {
-        border: 0.5px solid #DDD !important;
-        border-radius: 6px !important;
-        background-color: #FAFAFA !important;
-        font-size: 13px !important;
-    }
-    
-    .stButton button {
-        background-color: #B8DDB8 !important;
-        color: #1a1a2e !important;
-        border: none !important;
-        border-radius: 6px !important;
-        font-weight: 500 !important;
-        font-size: 13px !important;
-    }
-    
-    .stButton button:hover {
-        background-color: #A5D0A5 !important;
-    }
-    
-    .stSelectbox select {
-        background-color: #FAFAFA !important;
-        border: 0.5px solid #DDD !important;
-        border-radius: 4px !important;
-        font-size: 12px !important;
-    }
-    
-    .stSelectbox > div {
-        background-color: transparent !important;
-    }
-    
-    .example-button {
-        background-color: transparent !important;
-        border: 0.5px solid #DDD !important;
-        color: #666 !important;
-        border-radius: 5px !important;
-        font-size: 12px !important;
-        padding: 8px 10px !important;
-    }
-    
-    .example-button:hover {
-        background-color: #F5F5F5 !important;
-        border-color: #BBB !important;
-    }
-    
-    .insight-box {
-        background-color: #F8F8F8;
-        border-left: 3px solid #B8CDE8;
-        padding: 10px;
-        border-radius: 4px;
-        font-size: 11px;
-        line-height: 1.5;
-        color: #555;
-    }
-    
-    .dataset-info {
-        background: rgba(184, 221, 184, 0.1);
-        border-left: 3px solid #B8DDB8;
-        padding: 12px 16px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-        font-size: 13px;
-        color: #666;
-    }
-    
-    h1 {
-        color: #1a1a2e !important;
-        font-size: 28px !important;
-        font-weight: 400 !important;
-        margin-bottom: 8px !important;
-    }
-    
-    h2 {
-        color: #1a1a2e !important;
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        margin-top: 0 !important;
-        margin-bottom: 12px !important;
-    }
-    
-    h3 {
-        color: #1a1a2e !important;
-        font-size: 13px !important;
-        font-weight: 500 !important;
-    }
-    
-    p {
-        color: #888888 !important;
-        font-size: 14px !important;
-    }
-    
-    [data-testid="stExpander"] {
-        border: none !important;
-        background-color: transparent !important;
-    }
-    
-    [data-testid="stExpander"] details summary {
-        font-size: 13px !important;
-        font-weight: 500 !important;
-        color: #1a1a2e !important;
-    }
-    
-    [data-testid="stDivider"] {
-        margin: 24px 0 !important;
-        border-color: #E8DCC8 !important;
-    }
-    
-    [data-testid="stExpanderDetails"] {
-        background-color: transparent !important;
-    }
-    
-    [data-testid="stVerticalBlock"] > [style*="flex-direction: column"] > [data-testid="stVerticalBlock"]:has([data-testid="stSelectbox"]) {
-        background-color: transparent !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# No custom styling - using standard Streamlit
 
 # ── LOAD DATA ────────────────────────────────────────────
 @st.cache_data
@@ -426,14 +266,12 @@ def format_growth(value, label):
     color = "#00AA66" if value >= 0 else "#DD5555"
     return f"<div style='color:{color}; font-size:10px; line-height: 1.4;'>{arrow} {abs(value):.1f}% {label}</div>"
 
-# ── METRICS BOX ──────────────────────────────────────────
-st.markdown('<div class="metrics-box">', unsafe_allow_html=True)
-
-st.markdown(f"<div style='font-size: 11px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin-bottom: 12px;'>📈 Summary Metrics</div>", unsafe_allow_html=True)
-
 # ── DISPLAY METRICS ──────────────────────────────────────
 date_min = df_filtered['InvoiceDate'].min().strftime('%d %b %Y')
 date_max = df_filtered['InvoiceDate'].max().strftime('%d %b %Y')
+
+st.subheader(f"📈 Summary Metrics")
+st.caption(f"Period: {date_min} — {date_max}")
 
 # Calculate current period values
 curr_revenue = df_filtered['Revenue'].sum()
@@ -452,75 +290,40 @@ yoy_aov = (df_yoy['Revenue'].sum() / df_yoy['Invoice'].nunique()) if df_yoy is n
 aov_period_growth = ((curr_aov - prev_aov) / prev_aov * 100) if prev_aov else None
 aov_yoy_growth = ((curr_aov - yoy_aov) / yoy_aov * 100) if yoy_aov else None
 
-st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 12px;'><strong>Period:</strong> {date_min} — {date_max}</div>", unsafe_allow_html=True)
-
 # Display metrics in 4 columns
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.markdown(f"""
-    <div class="metric-card">
-    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Revenue</div>
-    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">£{curr_revenue/1e6:.2f}M</div>
-    {format_growth(rev_period_growth, period_label)}
-    {format_growth(rev_yoy_growth, yoy_label) if yoy_label else ''}
-    </div>
-    """, unsafe_allow_html=True)
+    growth_text = f"{format_growth(rev_period_growth, period_label)}" if rev_period_growth is not None else "No previous data"
+    st.metric("Total Revenue", f"£{curr_revenue/1e6:.2f}M", delta=growth_text if period_label else None)
 
 with col2:
-    st.markdown(f"""
-    <div class="metric-card">
-    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Orders</div>
-    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">{curr_orders:,}</div>
-    {format_growth(orders_period_growth, period_label)}
-    {format_growth(orders_yoy_growth, yoy_label) if yoy_label else ''}
-    </div>
-    """, unsafe_allow_html=True)
+    growth_text = f"{format_growth(orders_period_growth, period_label)}" if orders_period_growth is not None else "No previous data"
+    st.metric("Total Orders", f"{curr_orders:,}", delta=growth_text if period_label else None)
 
 with col3:
-    st.markdown(f"""
-    <div class="metric-card">
-    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Avg Order Value</div>
-    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">£{curr_aov:.2f}</div>
-    {format_growth(aov_period_growth, period_label)}
-    {format_growth(aov_yoy_growth, yoy_label) if yoy_label else ''}
-    </div>
-    """, unsafe_allow_html=True)
+    growth_text = f"{format_growth(aov_period_growth, period_label)}" if aov_period_growth is not None else "No previous data"
+    st.metric("Avg Order Value", f"£{curr_aov:.2f}", delta=growth_text if period_label else None)
 
 with col4:
-    st.markdown(f"""
-    <div class="metric-card">
-    <div style="font-size: 10px; color: #999999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Active Countries</div>
-    <div style="font-size: 20px; font-weight: 500; color: #1a1a2e; margin-bottom: 6px;">{curr_countries}</div>
-    <div style="font-size: 10px; color: #AAAAAA;">From period</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
+    st.metric("Active Countries", curr_countries)
 
 st.divider()
 
 # ── QUERY SECTION ────────────────────────────────────────
-st.markdown('<div class="query-section">', unsafe_allow_html=True)
+st.subheader("🔍 What would you like to see?")
+st.caption("Uses time period selected above")
 
-st.markdown("## 🔍 What would you like to see?")
+user_request = st.text_input(
+    "Your query",
+    placeholder="e.g. Show me monthly revenue by top 5 countries",
+    label_visibility="collapsed"
+)
 
-st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 12px;'><em>Uses time period selected above, unless explicitly requested otherwise</em></div>", unsafe_allow_html=True)
+generate_btn = st.button("✨ Generate", use_container_width=True)
 
-col_input, col_btn = st.columns([5, 1])
-
-with col_input:
-    user_request = st.text_input(
-        "Query input",
-        placeholder="e.g. Show me monthly revenue by top 5 countries",
-        label_visibility="collapsed"
-    )
-
-with col_btn:
-    generate_btn = st.button("✨ Generate")
-
-st.markdown("**Try these:**")
-col1, col2, col3, col4, col5, col6 = st.columns(6)
+st.markdown("**Try these examples:**")
+col1, col2, col3 = st.columns(3)
 
 example_queries = [
     "Show me weekly revenue trend",
@@ -531,20 +334,18 @@ example_queries = [
     "Sales by country pie chart"
 ]
 
-for i, (col, example) in enumerate(zip([col1, col2, col3, col4, col5, col6], example_queries)):
+for i, example in enumerate(example_queries):
+    col = col1 if i % 3 == 0 else (col2 if i % 3 == 1 else col3)
     with col:
         if st.button(example, key=f"ex_{i}", use_container_width=True):
             user_request = example
             generate_btn = True
 
-st.markdown('</div>', unsafe_allow_html=True)
-
 st.divider()
 
 # ── GENERATE & DISPLAY ────────────────────────────────────
 if generate_btn and user_request:
-    
-    col_chart, col_insights = st.columns([3, 1])
+    col_chart, col_insights = st.columns([2, 1])
     
     with col_chart:
         with st.spinner("✨ Generating chart..."):
@@ -556,7 +357,6 @@ if generate_btn and user_request:
                     'np': np, 'mticker': mticker
                 }
                 exec(code, local_vars)
-                st.markdown(f"<div style='font-size: 12px; color: #777; margin-bottom: 8px;'><strong>Time period:</strong> {period}</div>", unsafe_allow_html=True)
                 st.pyplot(plt.gcf())
                 plt.close()
 
@@ -571,12 +371,8 @@ if generate_btn and user_request:
         with st.spinner("💡 Generating insights..."):
             try:
                 insights = generate_insights(user_request, df_filtered)
-                st.markdown("### 💡 Key Insights")
-                st.markdown(f"""
-                <div class="insight-box">
-                {insights.replace(chr(10), '<br>')}
-                </div>
-                """, unsafe_allow_html=True)
+                st.subheader("💡 Insights")
+                st.info(insights)
             except Exception as e:
                 st.error(f"Error generating insights: {str(e)}")
 
